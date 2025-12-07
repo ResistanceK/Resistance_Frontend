@@ -1,0 +1,255 @@
+/* 1️⃣ 폰트 불러오기 */
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-8ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-4Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-7Bold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* 전체 적용 */
+html, body {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  background-color: #fff;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+  color: #222;
+  line-height: 1.4;
+}
+
+/* 전체 레이아웃 */
+.container {
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+/* 메뉴바 */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 10vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4vw;
+  padding: 0 40px;
+  border-bottom: 1px solid #ddd;
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+}
+
+nav a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 600;
+  font-size: 1vw;
+  line-height: 1.2;
+}
+
+nav a:hover {
+  color: #A6D1E4;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  margin: 5px;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+}
+
+.hero h1 {
+  font-size: 4vw;
+  font-weight: 800;
+  color: #070707;
+  line-height: 1.2;
+  margin-bottom: 2vh;
+  font-weight: 800;
+}
+
+.hero button {
+  background-color: #FFD700;  /* 밝은 노랑 */
+  color: #000;                /* 글자 선명하게 */
+  border: none;
+  padding: 1.2vh 3vw;
+  border-radius: 8px;
+  font-size: 1vw;
+  font-weight: 700;           /* 두껍게 */
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+  position: relative;         /* z-index 적용 위해 */
+  z-index: 2;                 /* ::before보다 위로 */
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 40vw;
+  border-radius: 5%;
+  background: #b2daf9;
+  z-index: 0;   /* 버튼보다 낮게 유지 */
+  opacity: 0.4; /* 투명도 적용 */
+  padding: 50px;
+}
+
+
+.hero button:hover {
+  background-color: #bbb500;
+}
+
+.hero-image {
+  position: absolute;
+  width: 35vw;
+  height: 35vw;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 1; 
+  z-index: 0;
+}
+
+
+.hero-image.left {
+   background-image: url('./picture/Light.png'); 
+   left: 5vw; bottom: 10vh; 
+  } 
+   
+/* 오른쪽 이미지 */ 
+.hero-image.right { 
+  background-image: url('./picture/Empty-Files.png'); 
+  right: 5vw; 
+  top: 10vh; 
+}
+
+
+/* About */ 
+.about { 
+  height: 70vh; 
+  padding: 12vh 8vw; 
+  background-color: 
+  #fff; margin : 7%; 
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+} 
+
+.about h2 { 
+  font-size: 2vw; 
+  font-weight: 800; 
+  margin-bottom: 2vh; 
+} 
+.about .item h3{
+  font-weight : 400;
+}
+.about .subtitle { 
+  font-weight: 800; 
+  margin-bottom: 9vh; 
+} 
+.about-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 5vh 4vw; } 
+.about-grid .item h3 { 
+  font-size: 1.2vw; 
+  margin-bottom: 1vh; 
+} 
+/*icon*/ 
+.about-grid .item { 
+  display: flex; 
+  align-items: flex-start; 
+  gap: 40px; 
+  margin-bottom: 10px; 
+} 
+.about-icon { 
+  width: 60px; 
+  height: 60px; 
+  object-fit: 
+  contain; 
+  margin-top: 1
+  5px; /* 아이콘 살짝 아래로 내림 */ 
+  opacity: 0.95; 
+}
+
+/* Function */
+.function {
+  height: 100vh;
+  width: 200vw;
+  padding: 12vh 15vw;
+  background:  #D7ECFC;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+}
+
+.function h2 {
+  font-size: 3vw;
+  font-weight: 800;
+  margin-bottom: 5vh;
+  line-height: 1.2;
+}
+
+.box {
+  padding: 4vh 3vw;
+  border-radius: 20px;
+  width: 40vw;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.box.white {
+  background-color: #fff;
+}
+
+.box:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  background-color: #EACC36;
+}
+
+.box h3 {
+  font-size: 1.3vw;
+  margin-bottom: 1.5vh;
+  line-height: 1.2;
+}
+
+.box p {
+  font-size: 1vw;
+  line-height: 1.4;
+}
+
+/* 계단형 정렬 */
+.function-item.left {
+  align-self: flex-start;
+}
+
+.function-item.right {
+  align-self: flex-start;
+  margin-left: 17vw;
+}
+
+/* block 간 거리 */
+.function-item {
+  margin-bottom: 5vh;
+}
+

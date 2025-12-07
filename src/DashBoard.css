@@ -1,0 +1,557 @@
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-8ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-4Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('./assets/fonts/Paperlogy-7Bold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* 전체 레이아웃 (2단 구조) */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  /* 배경 연회색 */
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+  /* 폰트는 임시로 Arial 사용 */
+}
+
+/* 좌측 사이드바 */
+.sidebar {
+  border-radius: 20px;
+  margin: 20px;
+  width: 10%;
+  min-width: 200px;
+  background: linear-gradient(180deg, #4887F1 0%, #7697e8 100%);
+  color: white;
+  padding: 30px 20px;
+  position: fixed;
+  height: calc(100vh - 40px);
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+/* 아이콘 + 제목 가로 정렬 */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* 아이콘과 제목 간격 */
+  margin-bottom: 50px;
+  flex-direction: column;
+}
+
+
+/* 아이콘 */
+.resistance-icon {
+  width: 120px;
+  /* 120px은 너무 커서 사이드바 깨질 수 있음 */
+  height: 120px;
+}
+
+/* 제목 텍스트 */
+.resistance-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0;
+  /* h1 기본 여백 제거 */
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+}
+
+
+/* 우측 메인 콘텐츠 스타일 */
+/* Contents 섹션 가로 스크롤 */
+.contents-section {
+  max-height: 250px;
+  /* 원하는 높이로 조정 */
+  overflow-x: auto;
+  /* 가로 스크롤 */
+  overflow-y: hidden;
+  /* 세로 스크롤 제거 */
+  padding-bottom: 10px;
+  max-width: 1200px;
+  margin-top: 80px;
+}
+
+.contents-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  /* 한 줄로 유지 */
+  gap: 20px;
+}
+
+.content-card {
+  flex: 0 0 auto;
+  /* flex-grow, flex-shrink 방지 */
+  min-width: 300px;
+  /* 카드 최소 너비 */
+  background-color: white;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content-card .video-container {
+  width: 100%;
+  height: 180px;
+  /* iframe 높이 지정 */
+  margin-top: 10px;
+}
+
+.content-card iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.content-card:hover {
+  transform: translateY(-5px);
+}
+
+.content-card.highlighted {
+  background-color: #f7f3ff;
+  border: 1px solid #d4c5f9;
+  box-shadow: 0 0 15px rgba(160, 100, 250, 0.1);
+}
+
+.main-content {
+  margin-left: 260px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
+/* 헤더/사용자 정보 */
+.dashboard-header {
+  display: flex;
+  justify-content: flex-end;
+  /* 우측 상단으로 사용자 정보 배치 */
+  align-items: center;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif
+}
+
+.user-info-container {
+  display: flex;
+  align-items: center;
+}
+
+.profile-circle {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #ccc;
+  /* 회색 원 */
+  margin-right: 10px;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-right: 70px;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #777;
+  margin-right: 70px;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-menu-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* 환영 섹션 (흰색 배경 카드) */
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0;
+}
+
+.welcome-text h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif
+}
+
+.welcome-text p {
+  font-size: 1rem;
+  color: #555;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 5 00;
+  font-family: 'Paperlogy', 'Noto Sans KR', sans-serif
+}
+
+.lamp-book-img {
+  width: 300px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Contents 섹션 */
+.contents-section h3,
+.led-section h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 100px;
+}
+
+.contents-grid {
+  display: flex;
+  gap: 100px;
+  margin-bottom: 40px;
+}
+
+.contents-section {
+  max-height: 400px;
+  /* 원하는 높이 지정 */
+  overflow-y: hidden;
+  padding-right: 10px;
+  /* 스크롤 생길 때 여백 */
+  margin-bottom: 40px;
+  max-width: 1000;
+}
+
+.logout-btn-sidebar {
+  margin-top: 30px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.logout-btn-sidebar:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+
+/* 스크롤바 스타일 (선택사항) */
+.contents-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contents-section::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 3px;
+}
+
+.contents-section::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.content-card {
+  width: 300px;
+  /* iframe 포함 카드 크기 조정 */
+  background-color: white;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.content-card .video-container {
+  width: 100%;
+  height: 180px;
+  /* iframe 높이 지정 */
+  margin-top: 10px;
+}
+
+.content-card iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.content-card:hover {
+  transform: translateY(-5px);
+}
+
+.content-card.highlighted {
+  /* 보라색 하이라이트 */
+  background-color: #f7f3ff;
+  border: 1px solid #d4c5f9;
+  box-shadow: 0 0 15px rgba(160, 100, 250, 0.1);
+}
+
+.card-icon-container {
+  /* 아이콘 및 그래프 표현 (단순화) */
+  width: 60px;
+  height: 60px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #444;
+  margin: 0 0 5px 0;
+}
+
+.card-label {
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0;
+}
+
+
+/* LED 섹션 */
+.led-grid {
+  display: flex;
+  gap: 20px;
+}
+
+.lesson-card {
+  flex: 1;
+  background-color: #f7f3ff;
+  /* 연한 보라색 배경 */
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.lesson-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.lesson-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.lesson-icon {
+  width: 80px;
+  height: 50px;
+  object-fit: contain;
+  align-self: flex-start;
+  /* 좌측 정렬 */
+}
+
+.lesson-view-btn {
+  background-color: #fff;
+  color: #8c80f1;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: flex-end;
+  /* 우측 하단 정렬 */
+}
+
+.lesson-view-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* 통계 섹션 */
+.stats-section {
+  margin-bottom: 30px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(72, 135, 241, 0.15);
+  border-color: rgba(72, 135, 241, 0.2);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+  border-radius: 14px;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #333;
+  font-family: 'Paperlogy', sans-serif;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: 500;
+}
+
+/* 빠른 액션 */
+.quick-actions {
+  margin-bottom: 30px;
+}
+
+.quick-actions h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 30px;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-family: 'Paperlogy', sans-serif;
+}
+
+.action-btn .action-icon {
+  font-size: 1.5rem;
+}
+
+.quiz-btn {
+  background: linear-gradient(135deg, #4887F1, #7697e8);
+  box-shadow: 0 4px 15px rgba(72, 135, 241, 0.4);
+}
+
+.quiz-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(72, 135, 241, 0.5);
+}
+
+.mission-btn {
+  background: linear-gradient(135deg, #FF6B6B, #ee8b8b);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.mission-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+}
+
+.notion-btn {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.notion-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+/* Contents 섹션 제목 수정 */
+.contents-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* 반응형 */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    justify-content: center;
+  }
+}

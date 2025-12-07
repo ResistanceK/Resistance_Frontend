@@ -1,0 +1,427 @@
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('./assets/fonts/Paperlogy-8ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('./assets/fonts/Paperlogy-4Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f8f8;
+    font-family: 'Paperlogy', 'Noto Sans KR', sans-serif;
+}
+
+.sidebar {
+    border-radius: 20px;
+    margin: 20px;
+    width: 10%;
+    min-width: 200px;
+    background: linear-gradient(180deg, #4887F1 0%, #7697e8 100%);
+    color: white;
+    padding: 30px 20px;
+    position: fixed;
+    height: calc(100vh - 40px);
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 50px;
+}
+
+.resistance-icon {
+    width: 120px;
+    height: 120px;
+}
+
+.resistance-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0;
+    text-align: center;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-menu-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar-menu-item:hover,
+.sidebar-menu-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.logout-btn-sidebar {
+    margin-top: 30px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-btn-sidebar:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.main-area {
+    margin-left: 260px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: calc(100% - 260px);
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.user-info-container {
+    display: flex;
+    align-items: center;
+}
+
+.profile-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-right: 15px;
+}
+
+.user-name {
+    font-weight: 800;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.welcome-text h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.welcome-text p {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0;
+}
+
+.lamp-book-img {
+    width: 150px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* 새 링크 추가 버튼 */
+.add-link-btn {
+    padding: 16px 30px;
+    background: linear-gradient(135deg, #4887F1, #7697e8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    align-self: flex-start;
+}
+
+.add-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(72, 135, 241, 0.4);
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+/* 모달 컨텐츠 */
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 25px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notion-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.notion-input:focus {
+    border-color: #4887F1;
+}
+
+.notion-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 30px;
+    border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+    padding: 12px 25px;
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+.share-btn {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #4887F1, #7697e8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(72, 135, 241, 0.3);
+}
+
+/* 공유된 링크 섹션 */
+.shared-links-section {
+    width: 100%;
+}
+
+.shared-links-section h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.links-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.link-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.link-card:hover {
+    transform: translateY(-3px);
+}
+
+.link-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+}
+
+.link-author {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 8px 0;
+}
+
+.link-url {
+    font-size: 0.9rem;
+    color: #4887F1;
+    text-decoration: none;
+}
+
+.link-url:hover {
+    text-decoration: underline;
+}
+
+.link-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.open-btn {
+    padding: 10px 20px;
+    background: #4887F1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.open-btn:hover {
+    background: #3a70d4;
+}
+
+.delete-btn {
+    padding: 10px 20px;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: #e04545;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-area {
+        margin-left: 0;
+        padding: 28px 20px;
+        width: 100%;
+    }
+
+    .welcome-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .lamp-book-img {
+        margin-top: 20px;
+        align-self: flex-end;
+    }
+
+    .notion-input-section {
+        flex-direction: column;
+    }
+}
