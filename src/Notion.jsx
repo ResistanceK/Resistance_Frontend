@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './Notion.css';
-import { API_BASE_URL } from './config';
+import { API_BASE_URL, FASTAPI_BASE_URL } from './config';
 
 import bookIcon from "./picture/Empty-Files.png";
 import lampBook from "./picture/Light.png";
@@ -24,7 +24,7 @@ export default function Notion() {
     // 링크 불러오기
     const fetchLinks = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}/api/notion/links`);
+            const res = await axios.get(`${FASTAPI_BASE_URL}/api/notion/links`);
             setSharedLinks(res.data);
         } catch (err) {
             console.error("Failed to fetch links:", err);
@@ -39,7 +39,7 @@ export default function Notion() {
         if (!notionUrl.trim()) return;
 
         try {
-            const res = await axios.post(`${API_BASE_URL}/api/notion/links`, {
+            const res = await axios.post(`${FASTAPI_BASE_URL}/api/notion/links`, {
                 url: notionUrl,
                 title: notionTitle.trim() || `노션 링크`,
                 description: notionDesc.trim() || '',
@@ -47,7 +47,7 @@ export default function Notion() {
                 avatar: userAvatar,
             });
 
-            setSharedLinks([res.data.link, ...sharedLinks]);
+            setSharedLinks([res.data, ...sharedLinks]);
             setNotionUrl('');
             setNotionTitle('');
             setNotionDesc('');
@@ -72,7 +72,7 @@ export default function Notion() {
         if (!result.isConfirmed) return;
 
         try {
-            await axios.delete(`${API_BASE_URL}/api/notion/links/${id}`);
+            await axios.delete(`${FASTAPI_BASE_URL}/api/notion/links/${id}`);
             setSharedLinks(sharedLinks.filter(link => link.id !== id));
             Swal.fire("삭제됨", "링크가 삭제되었습니다.", "success");
         } catch (err) {

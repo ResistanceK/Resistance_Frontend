@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './Quiz.css';
-import { API_BASE_URL } from './config';
+import { API_BASE_URL, FASTAPI_BASE_URL } from './config';
 
 import bookIcon from "./picture/Empty-Files.png";
 import lampBook from "./picture/Light.png";
@@ -15,94 +15,62 @@ export default function Quiz() {
     const userName = storedUser?.name || "Guest";
     const userAvatar = storedUser?.avatar;
 
-    const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [score, setScore] = useState(0);
-    const [showResult, setShowResult] = useState(false);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [isAnswered, setIsAnswered] = useState(false);
-    const [rankings, setRankings] = useState([]);
-    const [quizQuestions, setQuizQuestions] = useState([]);
+    const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [isManageMode, setIsManageMode] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({
-        question: '',
-        options: ['', '', '', ''],
-        correct: 0,
-        explanation: ''
+
+    // 로컬 스토리지에서 투표한 질문 ID 저장
+    const [votedQuestions, setVotedQuestions] = useState(() => {
+        const saved = localStorage.getItem("votedQuestions");
+        return saved ? JSON.parse(saved) : [];
     });
 
-    // 랭킹 불러오기 (API)
-    const fetchRankings = async () => {
-        try {
-            const res = await axios.get(`${API_BASE_URL}/api/quiz/rankings`);
-            setRankings(res.data);
-        } catch (err) {
-            console.error("Failed to fetch rankings:", err);
-        }
-    };
+    const [newQuestion, setNewQuestion] = useState({
+        question: '',
+        options: ['', '', '', '']
+    });
 
-    // 퀴즈 문제 불러오기 (API)
+    // 질문 목록 불러오기 (API)
     const fetchQuestions = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}/api/quiz/questions`);
-            setQuizQuestions(res.data);
+            const res = await axios.get(`${FASTAPI_BASE_URL}/api/quiz/questions`);
+            setQuestions(res.data);
         } catch (err) {
             console.error("Failed to fetch questions:", err);
-            // 기본 문제 사용
-            setQuizQuestions([
-                { id: 1, question: "물의 화학식은?", options: ["CO₂", "H₂O", "NaCl", "O₂"], correct: 1, explanation: "H₂O입니다." },
-            ]);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchRankings();
         fetchQuestions();
     }, []);
 
-    // 랭킹 저장 (API)
-    const saveRanking = async (newScore) => {
-        const newEntry = {
-            name: userName,
-            avatar: userAvatar,
-            score: newScore,
-            total: quizQuestions.length,
-            percentage: Math.round((newScore / quizQuestions.length) * 100),
-            date: new Date().toLocaleDateString('ko-KR'),
-        };
-
-        try {
-            const res = await axios.post(`${API_BASE_URL}/api/quiz/rankings`, newEntry);
-            setRankings(res.data.rankings);
-        } catch (err) {
-            console.error("Failed to save ranking:", err);
-        }
-    };
-
-    // 문제 추가
+    // 질문 추가
     const handleAddQuestion = async () => {
         if (!newQuestion.question.trim() || newQuestion.options.some(opt => !opt.trim())) {
-            Swal.fire("오류", "문제와 모든 선택지를 입력해주세요.", "warning");
+            Swal.fire("오류", "질문과 모든 선택지를 입력해주세요.", "warning");
             return;
         }
 
         try {
-            await axios.post(`${API_BASE_URL}/api/quiz/questions`, newQuestion);
+            await axios.post(`${FASTAPI_BASE_URL}/api/quiz/questions`, newQuestion);
             await fetchQuestions();
             setIsAddModalOpen(false);
-            setNewQuestion({ question: '', options: ['', '', '', ''], correct: 0, explanation: '' });
-            Swal.fire("성공", "문제가 추가되었습니다!", "success");
+            setNewQuestion({ question: '', options: ['', '', '', ''] });
+            Swal.fire("성공", "질문이 추가되었습니다!", "success");
         } catch (err) {
             console.error("Failed to add question:", err);
-            Swal.fire("오류", "문제 추가에 실패했습니다.", "error");
+            Swal.fire("오류", "질문 추가에 실패했습니다.", "error");
         }
     };
 
-    // 문제 삭제
+    // 질문 삭제
     const handleDeleteQuestion = async (id) => {
         const result = await Swal.fire({
-            title: "문제를 삭제하시겠습니까?",
-            text: "삭제된 문제는 복구할 수 없습니다.",
+            title: "질문을 삭제하시겠습니까?",
+            text: "삭제된 질문과 투표 결과는 복구할 수 없습니다.",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "삭제",
@@ -113,61 +81,43 @@ export default function Quiz() {
         if (!result.isConfirmed) return;
 
         try {
-            await axios.delete(`${API_BASE_URL}/api/quiz/questions/${id}`);
+            await axios.delete(`${FASTAPI_BASE_URL}/api/quiz/questions/${id}`);
             await fetchQuestions();
-            Swal.fire("삭제됨", "문제가 삭제되었습니다.", "success");
+            Swal.fire("삭제됨", "질문이 삭제되었습니다.", "success");
         } catch (err) {
             console.error("Failed to delete question:", err);
-            Swal.fire("오류", "문제 삭제에 실패했습니다.", "error");
+            Swal.fire("오류", "질문 삭제에 실패했습니다.", "error");
         }
     };
 
-    const handleAnswerClick = (answerIndex) => {
-        if (isAnswered) return;
-        setSelectedAnswer(answerIndex);
-        setIsAnswered(true);
-        if (answerIndex === quizQuestions[currentQuestion]?.correct) {
-            setScore(score + 1);
+    // 투표하기
+    const handleVote = async (questionId, answer) => {
+        if (votedQuestions.includes(questionId)) {
+            Swal.fire("알림", "이미 투표하셨습니다.", "info");
+            return;
+        }
+
+        try {
+            await axios.post(`${FASTAPI_BASE_URL}/api/quiz/vote`, {
+                question_id: questionId,
+                answer: answer
+            });
+
+            // 로컬 스토리지 업데이트
+            const newVoted = [...votedQuestions, questionId];
+            setVotedQuestions(newVoted);
+            localStorage.setItem("votedQuestions", JSON.stringify(newVoted));
+
+            await fetchQuestions();
+            Swal.fire("투표 완료", "소중한 의견 감사합니다!", "success");
+        } catch (err) {
+            console.error("Vote failed:", err);
+            Swal.fire("오류", "투표에 실패했습니다.", "error");
         }
     };
 
-    const handleNextQuestion = () => {
-        if (currentQuestion < quizQuestions.length - 1) {
-            setCurrentQuestion(currentQuestion + 1);
-            setSelectedAnswer(null);
-            setIsAnswered(false);
-        } else {
-            const finalScore = selectedAnswer === quizQuestions[currentQuestion]?.correct ? score + 1 : score;
-            saveRanking(finalScore);
-            setShowResult(true);
-        }
-    };
-
-    const handleRestartQuiz = () => {
-        setCurrentQuestion(0);
-        setScore(0);
-        setShowResult(false);
-        setSelectedAnswer(null);
-        setIsAnswered(false);
-    };
-
-    const getScoreMessage = () => {
-        const percentage = (score / quizQuestions.length) * 100;
-        if (percentage >= 90) return { emoji: "🏆", message: "완벽해요! 과학 천재!" };
-        if (percentage >= 70) return { emoji: "🎉", message: "훌륭해요!" };
-        if (percentage >= 50) return { emoji: "👍", message: "괜찮아요!" };
-        return { emoji: "📚", message: "더 공부해봐요!" };
-    };
-
-    const getRankEmoji = (index) => {
-        if (index === 0) return "🥇";
-        if (index === 1) return "🥈";
-        if (index === 2) return "🥉";
-        return `${index + 1}`;
-    };
-
-    if (quizQuestions.length === 0) {
-        return <div className="loading">퀴즈를 불러오는 중...</div>;
+    if (loading) {
+        return <div className="loading">불러오는 중...</div>;
     }
 
     return (
@@ -183,7 +133,7 @@ export default function Quiz() {
                     <p className="sidebar-menu-item" onClick={() => navigate("/Dash")}>대시보드</p>
                     <p className="sidebar-menu-item" onClick={() => navigate("/led-test")}>미션</p>
                     <p className="sidebar-menu-item" onClick={() => navigate("/notion")}>노션</p>
-                    <p className="sidebar-menu-item active" onClick={() => navigate("/quiz")}>퀴즈</p>
+                    <p className="sidebar-menu-item active" onClick={() => navigate("/quiz")}>선배님께 질문!</p>
                     <p className="sidebar-menu-item" onClick={() => navigate("/")}>정보</p>
                 </div>
 
@@ -215,15 +165,15 @@ export default function Quiz() {
 
                 <div className="welcome-section">
                     <div className="welcome-text">
-                        <h2>과학 퀴즈</h2>
-                        <p>과학 지식을 테스트해보세요!</p>
+                        <h2>선배님께 질문!</h2>
+                        <p>궁금한 점을 투표로 물어보세요.</p>
                     </div>
                     <div className="quiz-controls">
                         <button
                             className={`mode-btn ${isManageMode ? 'active' : ''}`}
                             onClick={() => setIsManageMode(!isManageMode)}
                         >
-                            {isManageMode ? '퀴즈 풀기' : '⚙️ 문제 관리'}
+                            {isManageMode ? '투표 참여' : '⚙️ 질문 관리'}
                         </button>
                     </div>
                 </div>
@@ -232,22 +182,22 @@ export default function Quiz() {
                 {isManageMode ? (
                     <div className="manage-section">
                         <div className="manage-header">
-                            <h3>퀴즈 문제 관리 ({quizQuestions.length}개)</h3>
+                            <h3>질문 관리 ({questions.length}개)</h3>
                             <button className="add-question-btn" onClick={() => setIsAddModalOpen(true)}>
-                                + 문제 추가
+                                + 질문 추가
                             </button>
                         </div>
 
                         <div className="questions-list">
-                            {quizQuestions.map((q, idx) => (
+                            {questions.map((q, idx) => (
                                 <div key={q.id} className="question-manage-card">
                                     <div className="question-number">Q{idx + 1}</div>
                                     <div className="question-info">
                                         <p className="question-text-small">{q.question}</p>
                                         <div className="options-preview">
                                             {q.options.map((opt, i) => (
-                                                <span key={i} className={`option-tag ${i === q.correct ? 'correct' : ''}`}>
-                                                    {String.fromCharCode(65 + i)}. {opt}
+                                                <span key={i} className="option-tag">
+                                                    {opt}
                                                 </span>
                                             ))}
                                         </div>
@@ -259,27 +209,24 @@ export default function Quiz() {
                             ))}
                         </div>
 
-                        {/* 문제 추가 모달 */}
+                        {/* 질문 추가 모달 */}
                         {isAddModalOpen && (
                             <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
                                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                     <div className="modal-header">
-                                        <h3>새 문제 추가</h3>
+                                        <h3>새 질문 추가</h3>
                                         <button className="modal-close-btn" onClick={() => setIsAddModalOpen(false)}>×</button>
                                     </div>
                                     <div className="modal-body">
                                         <input
                                             type="text"
-                                            placeholder="문제를 입력하세요"
+                                            placeholder="질문을 입력하세요"
                                             value={newQuestion.question}
                                             onChange={(e) => setNewQuestion({ ...newQuestion, question: e.target.value })}
                                             className="modal-input"
                                         />
                                         {newQuestion.options.map((opt, idx) => (
                                             <div key={idx} className="option-input-row">
-                                                <span className={`option-label ${newQuestion.correct === idx ? 'selected' : ''}`}>
-                                                    {String.fromCharCode(65 + idx)}
-                                                </span>
                                                 <input
                                                     type="text"
                                                     placeholder={`선택지 ${idx + 1}`}
@@ -291,22 +238,8 @@ export default function Quiz() {
                                                     }}
                                                     className="modal-input option-input"
                                                 />
-                                                <button
-                                                    type="button"
-                                                    className={`correct-btn ${newQuestion.correct === idx ? 'active' : ''}`}
-                                                    onClick={() => setNewQuestion({ ...newQuestion, correct: idx })}
-                                                >
-                                                    정답
-                                                </button>
                                             </div>
                                         ))}
-                                        <textarea
-                                            placeholder="설명 (선택사항)"
-                                            value={newQuestion.explanation}
-                                            onChange={(e) => setNewQuestion({ ...newQuestion, explanation: e.target.value })}
-                                            className="modal-input modal-textarea"
-                                            rows={2}
-                                        />
                                     </div>
                                     <div className="modal-footer">
                                         <button className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>취소</button>
@@ -317,95 +250,56 @@ export default function Quiz() {
                         )}
                     </div>
                 ) : (
-                    /* 퀴즈 모드 */
-                    <div className="quiz-main-container">
-                        <div className="quiz-container">
-                            {!showResult ? (
-                                <>
-                                    <div className="quiz-progress">
-                                        <div className="progress-text">문제 {currentQuestion + 1} / {quizQuestions.length}</div>
-                                        <div className="progress-bar">
-                                            <div className="progress-fill" style={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}></div>
-                                        </div>
-                                        <div className="score-text">현재 점수: {score}점</div>
-                                    </div>
+                    /* 투표 모드 */
+                    <div className="survey-container">
+                        {questions.length > 0 ? (
+                            <div className="survey-grid">
+                                {questions.map((q) => {
+                                    const isVoted = votedQuestions.includes(q.id);
+                                    return (
+                                        <div key={q.id} className="survey-card">
+                                            <h3 className="survey-question">{q.question}</h3>
+                                            <div className="survey-options">
+                                                {q.options.map((opt, idx) => {
+                                                    const count = q.vote_counts[opt] || 0;
+                                                    const percentage = q.total_votes > 0 ? Math.round((count / q.total_votes) * 100) : 0;
 
-                                    <div className="question-card">
-                                        <h3 className="question-text">{quizQuestions[currentQuestion]?.question}</h3>
-
-                                        <div className="options-container">
-                                            {quizQuestions[currentQuestion]?.options.map((option, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`option-btn ${isAnswered
-                                                        ? index === quizQuestions[currentQuestion]?.correct
-                                                            ? 'correct'
-                                                            : selectedAnswer === index ? 'wrong' : ''
-                                                        : selectedAnswer === index ? 'selected' : ''
-                                                        }`}
-                                                    onClick={() => handleAnswerClick(index)}
-                                                    disabled={isAnswered}
-                                                >
-                                                    <span className="option-letter">{String.fromCharCode(65 + index)}</span>
-                                                    {option}
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        {isAnswered && (
-                                            <div className={`explanation ${selectedAnswer === quizQuestions[currentQuestion]?.correct ? 'correct' : 'wrong'}`}>
-                                                <p>{selectedAnswer === quizQuestions[currentQuestion]?.correct ? '✅ 정답입니다!' : '❌ 틀렸습니다.'}</p>
-                                                <p>{quizQuestions[currentQuestion]?.explanation}</p>
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`survey-option ${isVoted ? 'voted' : ''}`}
+                                                            onClick={() => !isVoted && handleVote(q.id, opt)}
+                                                        >
+                                                            <div className="option-content">
+                                                                <span className="option-text">{opt}</span>
+                                                                {isVoted && <span className="option-percent">{percentage}% ({count}표)</span>}
+                                                            </div>
+                                                            {isVoted && (
+                                                                <div className="progress-bar-bg">
+                                                                    <div
+                                                                        className="progress-bar-fill"
+                                                                        style={{ width: `${percentage}%` }}
+                                                                    ></div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                        )}
-
-                                        {isAnswered && (
-                                            <button className="next-btn" onClick={handleNextQuestion}>
-                                                {currentQuestion < quizQuestions.length - 1 ? '다음 문제' : '결과 보기'}
-                                            </button>
-                                        )}
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="result-card">
-                                    <div className="result-emoji">{getScoreMessage().emoji}</div>
-                                    <h2 className="result-title">퀴즈 완료!</h2>
-                                    <div className="result-score">
-                                        <span className="score-number">{score}</span>
-                                        <span className="score-total">/ {quizQuestions.length}</span>
-                                    </div>
-                                    <p className="result-message">{getScoreMessage().message}</p>
-                                    <div className="result-percentage">정답률: {Math.round((score / quizQuestions.length) * 100)}%</div>
-                                    <button className="restart-btn" onClick={handleRestartQuiz}>다시 도전하기</button>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 랭킹 패널 */}
-                        <aside className="ranking-panel">
-                            <div className="ranking-card">
-                                <h3 className="ranking-title">🏆 명예의 전당</h3>
-                                {rankings.length === 0 ? (
-                                    <p className="no-rankings">아직 기록이 없어요!</p>
-                                ) : (
-                                    <div className="ranking-list">
-                                        {rankings.slice(0, 10).map((entry, index) => (
-                                            <div className={`ranking-item ${entry.name === userName ? 'current-user' : ''}`} key={index}>
-                                                <span className="rank-number">{getRankEmoji(index)}</span>
-                                                <div className="rank-user">
-                                                    {entry.avatar && <img src={entry.avatar} alt="" className="rank-avatar" />}
-                                                    <span className="rank-name">{entry.name}</span>
-                                                </div>
-                                                <div className="rank-score">
-                                                    <span className="rank-percentage">{entry.percentage}%</span>
-                                                    <span className="rank-detail">{entry.score}/{entry.total}</span>
-                                                </div>
+                                            <div className="survey-footer">
+                                                <span className="total-votes">총 {q.total_votes}명 참여</span>
+                                                {isVoted && <span className="voted-badge">참여완료</span>}
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        </aside>
+                        ) : (
+                            <div className="no-questions">
+                                <h3>등록된 질문이 없습니다.</h3>
+                                <p>관리자 모드에서 질문을 추가해주세요.</p>
+                            </div>
+                        )}
                     </div>
                 )}
             </main>

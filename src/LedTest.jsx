@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import axios from "axios";
 import './LedTest.css';
-import { API_BASE_URL, SPRING_API_BASE_URL } from './config';
+import { API_BASE_URL, FASTAPI_BASE_URL } from './config';
 
 import bookIcon from "./picture/Empty-Files.png";
 import lampBook from "./picture/Light.png";
@@ -16,7 +16,7 @@ export default function LedTest() {
   const userAvatar = storedUser?.avatar;
   const userEmail = storedUser?.email || "";
 
-  const API_BASE = SPRING_API_BASE_URL;
+  const API_BASE = FASTAPI_BASE_URL;
 
   const [arduinoConnected, setArduinoConnected] = useState(false);
   const [missions, setMissions] = useState([]);
@@ -32,7 +32,7 @@ export default function LedTest() {
   // 아두이노 상태 확인
   const fetchArduinoStatus = async () => {
     try {
-      const res = await fetch(`${API_BASE}/sensor/status`);
+      const res = await fetch(`${API_BASE}/api/sensor/status`);
       const data = await res.json();
       setArduinoConnected(data.connected);
     } catch (err) {
@@ -44,7 +44,7 @@ export default function LedTest() {
   // 미션 목록 조회
   const fetchMissions = async () => {
     try {
-      const res = await fetch(`${API_BASE}/mission/active`);
+      const res = await fetch(`${API_BASE}/api/mission/active`);
       const data = await res.json();
       setMissions(data);
     } catch (err) {
@@ -87,7 +87,7 @@ export default function LedTest() {
       });
 
       // 백엔드 API 호출 (미션 실행)
-      const response = await fetch(`${API_BASE}/mission/${mission.id}/execute`, {
+      const response = await fetch(`${API_BASE}/api/mission/${mission.id}/execute`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -136,7 +136,7 @@ export default function LedTest() {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/mission`, {
+      const response = await fetch(`${API_BASE}/api/mission`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -186,7 +186,7 @@ export default function LedTest() {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`${API_BASE}/mission/${id}`, {
+      await fetch(`${API_BASE}/api/mission/${id}`, {
         method: "DELETE",
       });
       setMissions(missions.filter(m => m.id !== id));
