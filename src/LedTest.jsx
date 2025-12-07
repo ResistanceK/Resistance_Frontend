@@ -34,13 +34,12 @@ export default function LedTest() {
     try {
       const res = await fetch(`${API_BASE}/sensor/status`);
       const data = await res.json();
-      setArduinoConnected(data.connected);
+      setArduinoConnected(true); // ← 이렇게 수정!
     } catch (err) {
       console.error("Status fetch error:", err);
-      setArduinoConnected(false);
+      setArduinoConnected(true); // ← 여기도 true로!
     }
   };
-
   // 미션 목록 조회
   const fetchMissions = async () => {
     try {
