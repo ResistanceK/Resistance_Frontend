@@ -10,7 +10,7 @@ export default function Mainpage() {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate("/login"); // 버튼 클릭 시 Login 페이지로 이동
+    navigate("/dash"); // 버튼 클릭 시 Login 페이지로 이동
   };
 
   return (
