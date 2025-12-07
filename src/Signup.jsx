@@ -56,13 +56,7 @@ export default function Signup() {
   // Once username is set, show the welcome page.
   return (
     <div className="signup-container">
-      <nav className="top-nav">
-        <a href="#led">LED</a>
-        <a href="#study">STUDY</a>
-        <a href="#record">RECORD</a>
-        <a href="#login">LOGIN</a>
-        <div className="profile-circle"></div>
-      </nav>
+  
 
       <div className="welcome-card">
         <div className="welcome-content">
