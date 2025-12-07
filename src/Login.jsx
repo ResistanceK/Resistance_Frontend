@@ -27,7 +27,7 @@ export default function Login() {
             className="github-btn"
             onClick={() => {
               localStorage.removeItem("user");
-              window.location.href = `${API_BASE_URL}/auth/github`;
+              window.location.href = `${API_BASE_URL}/oauth2/authorization/github`;
             }}
           >
             <img src={githubIcon} alt="GitHub" className="github-icon" />
